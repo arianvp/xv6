@@ -76,19 +76,19 @@ sys_dup2(void)
     return -1;
   }
 
-  if (argfd(0, &newfd, &newfile) == 0)
+  if (argfd(1, &newfd, &newfile) == 0)
   {
+
     // newfd already exists and needs to be closed.
-    closefile(newfile); // TODO check if this is correct. we might do this in filedup2
+    fileclose(newfile);
   }
 
   // If oldfd is a valid file descriptor, and newfd has the same value as
   // oldfd, then dup2() does nothing, and returns newfd.
-  if (oldfile != newfile)
-  {
+
     filedup(oldfile); // increment reference count;
     proc->ofile[newfd] = proc->ofile[oldfd];
-  }
+
   return newfd;
 }
 
@@ -431,12 +431,14 @@ sys_exec(void)
     return -1;
   }
   memset(argv, 0, sizeof(argv));
-  for(i=0;; i++){
+  for(i=0;; i++)
+  {
     if(i >= NELEM(argv))
       return -1;
     if(fetchint(uargv+4*i, (int*)&uarg) < 0)
       return -1;
-    if(uarg == 0){
+    if(uarg == 0)
+    {
       argv[i] = 0;
       break;
     }
