@@ -64,6 +64,35 @@ sys_dup(void)
 }
 
 int
+sys_dup2(void)
+{
+  struct file *oldfile, *newfile;
+  int oldfd, newfd;
+
+  // If oldfd is not a valid file descriptor, then the call fails, and
+  // newfd is not closed.
+  if (argfd(0, &oldfd, &oldfile) < 0)
+  {
+    return -1;
+  }
+
+  if (argfd(0, &newfd, &newfile) == 0)
+  {
+    // newfd already exists and needs to be closed.
+    closefile(newfile); // TODO check if this is correct. we might do this in filedup2
+  }
+
+  // If oldfd is a valid file descriptor, and newfd has the same value as
+  // oldfd, then dup2() does nothing, and returns newfd.
+  if (oldfile != newfile)
+  {
+    filedup(oldfile); // increment reference count;
+    proc->ofile[newfd] = proc->ofile[oldfd];
+  }
+  return newfd;
+}
+
+int
 sys_read(void)
 {
   struct file *f;
