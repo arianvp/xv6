@@ -6,7 +6,7 @@
 int
 main(int argc, char *argv[])
 {
-  char *grep_args[] = {"grep", "ACKNOWLEDGMENTS", (void*)0};
+  char *grep_args[] = {"grep", "xv6", (void*)0};
   int in, out;
   in = open ("README", O_RDONLY);
   out = open ("out", O_WRONLY);
